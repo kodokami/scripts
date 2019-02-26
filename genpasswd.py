@@ -1,7 +1,8 @@
 #!/usr/bin/env python3
 # -*- coding: utf-8 -*-
 """
-Simple password generating script
+Simple password generating script for UNIX based systems
+It uses system entropy (/dev/urandom) for password generation
 
 Copyright (C) 2018-2019 _kodokami
 """
