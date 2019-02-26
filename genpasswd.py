@@ -99,11 +99,11 @@ def commandmaker():
     script_args = parser.add_argument_group(title='other')
 
     script_args.add_argument('-p', '--password-count', action='store', type=_positive,
-                             help='described how many passwords should be generated (def: 3)',
+                             help='describes how many passwords should be generated (def: 3)',
                              default=3, required=False, metavar='COUNT')
 
     script_args.add_argument('--compact', action='store_true',
-                             help='inline compact view, with space as password separator')
+                             help='inline compact view, with space as separator')
 
     script_args.add_argument('-v', '--version', action='version',
                              version=f'{script_name} v{__version__}',
