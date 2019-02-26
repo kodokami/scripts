@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 # -*- coding: utf-8 -*-
 """
-Simple password generating script for UNIX based systems
+Password generating script for UNIX based systems
 It uses system entropy (/dev/urandom) for password generation
 
 Copyright (C) 2018-2019 _kodokami
@@ -68,7 +68,7 @@ def _pass_type(value):
 
 def commandmaker():
     script_name = sys.argv[0].split('/')[-1]
-    script_desc = 'simple password generating script for UNIX based systems\n' \
+    script_desc = 'password generating script for UNIX based systems\n' \
                   'it uses system entropy (/dev/urandom) for password generation'
     parser = argparse.ArgumentParser(prog=script_name, description=script_desc,
                                      epilog='---\nCopyright (C) 2018-2019 _kodokami',
@@ -79,7 +79,7 @@ def commandmaker():
     pass_args = parser.add_argument_group(title='password options')
 
     pass_args.add_argument('password_type', action='store', metavar='TYPE', type=_pass_type,
-                           help='password type, available options are:\n'
+                           help='password type, available options:\n'
                                 '  - num | numeric    - numeric password (PIN)\n'
                                 '  - low | lowercase  - alfanumeric password with lowercase only characters\n'
                                 '  - upp | uppercase  - alfanumeric password with uppercase only characters\n'
