@@ -1,18 +1,9 @@
-# system files
+# system
 .DS_Store
 
-# environmental
+# env
 /.idea/
-/env*/
+/env/
 
-# configuration and log files
-*.config
-*.conf
-*.cf
-*.log
-
-# code related
+# code
 *.pyc
-
-# temporarily excluding zabbix directory
-/zabbix/
