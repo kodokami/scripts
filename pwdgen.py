@@ -7,13 +7,12 @@ It uses the system entropy (/dev/urandom) for password generation
 Copyright (C) 2018-2020 _kodokami
 """
 __author__ = '_kodokami <kodokami@protonmail.com>'
-__version__ = '2.0.0'
+__version__ = '2.0.1'
 
 import os
 import sys
 import random
-import argparse
-from argparse import RawTextHelpFormatter, ArgumentTypeError
+from argparse import ArgumentParser, ArgumentTypeError, RawTextHelpFormatter
 from enum import Enum
 
 # character collections
@@ -72,12 +71,10 @@ def commandmaker():
     name = os.path.basename(sys.argv[0]).split('.')[0]
     desc = 'password generator for UNIX based systems\n' \
            'it uses the system entropy (/dev/urandom) for password generation'
-    foot = '---\nCopyright (C) 2018-2020 _kodokami'
+    foot = 'Copyright (C) 2018-2020 _kodokami'
 
-    parser = argparse.ArgumentParser(
-        prog=name, description=desc, epilog=foot,
-        formatter_class=RawTextHelpFormatter, add_help=False
-    )
+    parser = ArgumentParser(prog=name, description=desc, epilog=foot, add_help=False)
+    parser.formatter_class = RawTextHelpFormatter
 
     # password options
     pass_args = parser.add_argument_group(title='password options')
