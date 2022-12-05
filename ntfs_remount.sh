@@ -3,7 +3,7 @@
 # Script for simpler RW remounting of NTFS drives under MacOS system.
 # Requires the ntfs-3g package.
 #
-# Copyright (C) 2019-2020 _kodokami
+# Copyright (C) 2019-2022 _kodokami
 #
 
 NTFS_DRIVES=$(diskutil list | egrep '^.*(Microsoft|Windows).*disk[1-9]s[1-9]$' | rev | cut -d' ' -f1 | rev)
@@ -15,6 +15,7 @@ function print_help {
     echo -e "available commands:"
     echo -e "\tlist     - lists all available NTFS drives"
     echo -e "\tremount  - remounts specified drive (pass ALL for remounting all detected drives)"
+    echo -e "\tmount    - mounts specified drive without unmounting it first"
     echo -e "\thelp     - prints this help message"
 }
 
@@ -27,13 +28,14 @@ function list_drives {
     fi
 }
 
-function remount_drive {
-    DRIVE_NAME=${1:?"err: drive name not provided"}
-    DRIVE_PATH=$(mount | grep ${DRIVE_NAME} | cut -d' ' -f1)
+function mount_drive {
+    DRIVE_NAME=${1:?"err: drive name not specified"}
+    DRIVE_PATH="/dev/${DRIVE_NAME}"
 
-    echo "Remounting drive ${DRIVE_NAME} mounted at $(mount | grep ${DRIVE_NAME} | cut -d' ' -f3)"
-
-    sudo umount ${DRIVE_PATH}
+    if [[ "$(ls -1 /dev | grep ${DRIVE_NAME})" == "" ]]; then
+        echo -e "err: drive ${DRIVE_NAME} not found!"
+        exit 1
+    fi
 
     # checking for /Volumes/NTFS directory
     BASE_PATH="/Volumes/NTFS"
@@ -59,18 +61,29 @@ function remount_drive {
         sudo mkdir -p ${NEW_PATH}
     fi
 
-    EXIT_CODE=
-    sudo ntfs-3g ${DRIVE_PATH} ${NEW_PATH} -olocal,oallow_other,auto_xattr && EXIT_CODE=$?
+    sudo ntfs-3g ${DRIVE_PATH} ${NEW_PATH} -olocal,oallow_other,auto_xattr
+    EXIT_CODE=$?
 
     if [[ "${EXIT_CODE}" -eq "0" ]]; then
         echo -e "Drive ${DRIVE_NAME} mounted SUCCESSFULLY!"
-        echo -e "New mount point: ${NEW_PATH}"
+        echo -e "Drive mount point: ${NEW_PATH}"
     else
-        echo -e "Mounting drive ${DRIVE_NAME} FAILED!"
+        echo -e "Mounting drive ${DRIVE_NAME} failed! [EXIT_CODE=${EXIT_CODE}]"
+    fi
+}
+
+function remount_drive {
+    DRIVE_NAME=${1:?"err: drive name not specified"}
+    DRIVE_PATH=$(mount | grep ${DRIVE_NAME} | cut -d' ' -f1)
+
+    if [[ "${DRIVE_PATH}" != "" ]]; then
+        echo "Remounting drive ${DRIVE_NAME} mounted at $(mount | grep ${DRIVE_NAME} | cut -d' ' -f3)"
+        sudo umount ${DRIVE_PATH}
+    else
+        echo -e "warn: drive ${DRIVE_NAME} not mounted!"
     fi
 
-    # returning ntfs-3g exit_code
-    return ${EXIT_CODE}
+    mount_drive ${DRIVE_NAME}
 }
 
 function remount_all {
@@ -125,6 +138,9 @@ OPTION=${2:-""}
 case $COMMAND in
     list)
         list_drives
+        ;;
+    mount)
+        mount_drive $OPTION
         ;;
     remount)
         remount $OPTION
